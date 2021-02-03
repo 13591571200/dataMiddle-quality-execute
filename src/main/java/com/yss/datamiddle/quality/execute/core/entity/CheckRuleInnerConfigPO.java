@@ -44,9 +44,14 @@ public class CheckRuleInnerConfigPO {
     private String dataConnTableName;
 
     /**
-     * 数据对象名称集合 (如果校验级别是表级，则此字段为表名集合，如果校验级别是字段级，则此字段为字段名集合)
+     * 检查对象表名称集合
      */
-    private List<String> checkObjectNameList;
+    private String checkTableNameList;
+
+    /**
+     * 检查对象列名称集合
+     */
+    private String checkColumnNameList;
 
     /**
      * 检查模板id
@@ -102,4 +107,9 @@ public class CheckRuleInnerConfigPO {
      * 执行SQL
      */
     private String scriptJson;
+
+    /**
+     * 修改用户id
+     */
+    private String updateUserid;
 }

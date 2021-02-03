@@ -1,5 +1,6 @@
 package com.yss.datamiddle.quality.execute;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.yss.datamiddle.message.common.RetResult;
 import com.yss.datamiddle.message.dto.message.PublishThemeDto;
@@ -16,6 +17,8 @@ import com.yss.datamiddle.message.rest.impl.MsSdkMessageRestImpl;
 import com.yss.datamiddle.message.rest.impl.MsSdkSubscribeRestImpl;
 import com.yss.datamiddle.message.rest.impl.MsSdkTemplateRestImpl;
 import com.yss.datamiddle.message.rest.impl.MsSdkThemeRestImpl;
+import com.yss.datamiddle.vo.DataConnVO;
+import org.apache.avro.data.Json;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,19 +32,20 @@ import java.util.Map;
  **/
 public class Main2 {
 
-
     private static void ThemeList(){
         MsSdkThemeRest msSdkThemeRest = new MsSdkThemeRestImpl();
         ThemeListDto themeListDto = new ThemeListDto();
         themeListDto.setPageNum(0);
-        themeListDto.setPageSize(10);
+        themeListDto.setPageSize(1000);
         themeListDto.setHost("192.168.100.163:30250");
         RetResult retResult = msSdkThemeRest.list(themeListDto);
-        System.out.println(retResult);
+//        System.out.println(retResult);
         Object data = retResult.getData();
         Map map = (Map)data;
         List list1 = (List)map.get("list");
-        System.out.println(list1);
+        list1.forEach(o -> System.out.println(o));
+
+
     }
 
     private static void detail(){

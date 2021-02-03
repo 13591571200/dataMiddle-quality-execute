@@ -11,6 +11,7 @@ import com.yss.datamiddle.quality.execute.log.Log;
 import com.yss.datamiddle.quality.execute.message.service.MessageServiceImpl;
 import com.yss.datamiddle.quality.execute.message.service.dto.SendMessageDTO;
 import com.yss.datamiddle.quality.execute.scheduler.entity.ProcessInstanceEntity;
+import com.yss.datamiddle.quality.execute.service.ScriptService;
 import com.yss.datamiddle.quality.execute.util.SqlExecuteUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.*;
@@ -35,14 +36,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MainApp {
 
     public static void main(String[] args) {
-        String QualityConnId = args[0];
-        System.out.println("param[0] => " + QualityConnId);
-        String checkRuleInnerConfigId = args[1];
-        System.out.println("param[1] => " + checkRuleInnerConfigId);
-        String projectName = args[2];
-        System.out.println("param[2] => " + projectName);
-        entrance(QualityConnId , checkRuleInnerConfigId, projectName);
-//        entrance("205","231", "dataMiddleQuality");
+//        String QualityConnId = args[0];
+//        System.out.println("param[0] => " + QualityConnId);
+//        String checkRuleInnerConfigId = args[1];
+//        System.out.println("param[1] => " + checkRuleInnerConfigId);
+//        String projectName = args[2];
+//        System.out.println("param[2] => " + projectName);
+//        entrance(QualityConnId , checkRuleInnerConfigId, projectName);
+        entrance("205","467", "dataMiddleQuality");
     }
 
     private static void entrance(String QualityConnId, String checkRuleInnerConfigId, String projectName){
@@ -72,10 +73,11 @@ public class MainApp {
         Log.info("[信息] - 工作流实例id:{0}, 工作流名称:{1}", lastProcessInstance.getId().toString(), lastProcessInstance.getName());
 
         List<SendMessageDTO> sendMessageList = Lists.newArrayList();
+        ScriptService scriptService = new ScriptService();
 
         if(CheckRuleCheckLevelEnum.TABLE.getCode() == checkLevel || CheckRuleCheckLevelEnum.FIELD.getCode() == checkLevel){
             Log.info("[信息] - 校验级别: {0}", CheckRuleCheckLevelEnum.getDescByCode(checkLevel));
-            Map<String, Map<String, String>> rootMap = JSON.parseObject(checkRuleInnerConfigPO.getScriptJson(), Map.class);
+            Map<String, Map<String, String>> rootMap = JSON.parseObject(scriptService.getScriptJson(QualityConnId, checkRuleInnerConfigPO), Map.class);
             Log.info("[信息] - 检查规则子规则数量: {0}", String.valueOf(rootMap.size()));
             AtomicInteger index = new AtomicInteger();
             rootMap.entrySet().stream().forEach(o -> {
@@ -139,8 +141,7 @@ public class MainApp {
         if(CheckRuleCheckLevelEnum.CUSTOM.getCode() == checkLevel){
             Log.info("[信息] - 校验级别: {0}", CheckRuleCheckLevelEnum.getDescByCode(checkLevel));
             Log.info("[信息] - <======================= 检查开始 - 自定义对象 =======================>");
-            String scriptJson = checkRuleInnerConfigPO.getScriptJson();
-            Map<String, Object> map = JSON.parseObject(scriptJson, Map.class);
+            Map<String, Object> map = JSON.parseObject(scriptService.getScriptJson(QualityConnId, checkRuleInnerConfigPO), Map.class);
             String checkSql = map.get("checkSql").toString();
             Log.info("[SQL执行开始] - 检查sql: {0}", checkSql);
             LocalDateTime start5 = LocalDateTime.now();
